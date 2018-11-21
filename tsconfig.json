@@ -16,6 +16,14 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@elm/ngx-datepicker": [
+        "dist/elm/ngx-datepicker"
+      ],
+      "@elm/ngx-datepicker/*": [
+        "dist/elm/ngx-datepicker/*"
+      ]
+    }
   }
 }

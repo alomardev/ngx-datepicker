@@ -1,0 +1,13 @@
+<div class="input-group">
+  <input type="text" role="button" class="form-control text-center" readonly
+  datepicker
+  [name]="name || 'date-input'"
+  [value]="innerValue || ''"
+  [maxDate]='maxDate'
+  [minDate]='minDate'
+  [dateFormat]='dateFormat'
+  [calendarType]='calendarType'
+  (blur)='onBlur($event)'
+  (changed)='onChanged($event)'>
+  <span datepicker-trigger="date-input" class="input-group-btn"><button class="btn default" type="button"><i class="fa fa-calendar"></i></button></span>
+</div>
