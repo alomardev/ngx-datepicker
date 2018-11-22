@@ -1,13 +1,15 @@
-<div class="input-group">
-  <input type="text" role="button" class="form-control text-center" readonly
+<div class="input-group datepicker">
+  <span *ngIf="configs.button == 'start'" (click)="show()" class="input-group-btn input-group-prepend"><button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button></span>
+  <input type="text" class="form-control text-center" readonly
   datepicker
-  [name]="name || 'date-input'"
+  [name]="name || ''"
+  [lang]='lang'
   [value]="innerValue || ''"
   [maxDate]='maxDate'
   [minDate]='minDate'
   [dateFormat]='dateFormat'
-  [calendarType]='calendarType'
+  [calendar]='calendar'
   (blur)='onBlur($event)'
   (changed)='onChanged($event)'>
-  <span datepicker-trigger="date-input" class="input-group-btn"><button class="btn default" type="button"><i class="fa fa-calendar"></i></button></span>
+  <span *ngIf="configs.button == 'end'" (click)="show()" class="input-group-btn input-group-append"><button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button></span>
 </div>

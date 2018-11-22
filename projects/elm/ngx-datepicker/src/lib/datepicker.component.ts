@@ -1,4 +1,7 @@
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { DatePickerConfigs } from './../../../../../dist/elm/ngx-datepicker/lib/datepicker.service.d';
+import { DatePickerService } from './datepicker.service';
+import { DatePickerDirective } from './datepicker.directive';
+import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 export const DATEPICKER_CONTROL_VALUE_ACCESSOR: any = {
@@ -8,15 +11,17 @@ export const DATEPICKER_CONTROL_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-  selector: 'date-picker',
+  selector: 'datepicker',
   templateUrl: './datepicker.component.html',
-  providers: [DATEPICKER_CONTROL_VALUE_ACCESSOR]
+  styleUrls: ['./assets/jquery.calendars.picker.css'],
+  encapsulation: ViewEncapsulation.None,
+  providers: [DATEPICKER_CONTROL_VALUE_ACCESSOR],
 })
 export class DatePickerComponent implements ControlValueAccessor {
   
-  @Input('type') calendarType: string;
+  @Input() calendar: string;
 
-  @Input() lang: string = "en";
+  @Input() lang: string;
   @Input() name: string;
   @Input() minDate: string;
   @Input() maxDate: string;
@@ -25,16 +30,24 @@ export class DatePickerComponent implements ControlValueAccessor {
   @Output('blur') blurHandler: EventEmitter<any> = new EventEmitter();
   @Output('changed') changedHandler: EventEmitter<string> = new EventEmitter();
 
+  @ViewChild(DatePickerDirective) input: DatePickerDirective;
+
   innerValue: string;
+  configs: DatePickerConfigs;
 
   onModelChanged = (v: any) => {};
   onModelTouched = () => {};
+
+  constructor(private datepickerService: DatePickerService) {
+    this.configs = this.datepickerService.configs;
+  }
 
   writeValue(value: any): void {
     if (value !== this.innerValue) {
       this.innerValue = value;
     }
   }
+
   registerOnChange(fn: any): void {
     this.onModelChanged = fn;
   }
@@ -50,6 +63,10 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   onBlur(event) {
     this.blurHandler.emit(event);
+  }
+
+  show() {
+    this.input.show();
   }
 
 }

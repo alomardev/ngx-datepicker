@@ -1,8 +1,9 @@
+import { CustomDatePickerService } from './custom-date-picker.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { DatePickerModule } from '@elm/ngx-datepicker';
+import { DatePickerModule } from 'projects/elm/ngx-datepicker/src/public_api';
 
 @NgModule({
   declarations: [
@@ -10,7 +11,7 @@ import { DatePickerModule } from '@elm/ngx-datepicker';
   ],
   imports: [
     BrowserModule,
-    DatePickerModule,
+    DatePickerModule.forRoot(CustomDatePickerService),
   ],
   providers: [],
   bootstrap: [AppComponent]

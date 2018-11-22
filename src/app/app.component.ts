@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import * as $ from 'jquery';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +7,7 @@ import * as $ from 'jquery';
 })
 export class AppComponent {
   title = 'datepicker-wrapper';
-
   constructor() {
+    localStorage.setItem("lang", "en");
   }
 }

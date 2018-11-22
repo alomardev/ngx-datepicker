@@ -1,22 +1,24 @@
+import { DatePickerService } from './datepicker.service';
 import { Directive, ElementRef, HostListener, Input, Output, EventEmitter, OnInit, Optional } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import $ from 'jquery';
-import './jquery.plugin';
-import './jquery.calendars';
-import './jquery.calendars.plus';
-import './jquery.calendars.picker';
-import './jquery.calendars.ummalqura';
-import './jquery.calendars.translations';
+import './assets/jquery.plugin';
+import './assets/jquery.calendars';
+import './assets/jquery.calendars.plus';
+import './assets/jquery.calendars.picker';
+import './assets/jquery.calendars.ummalqura';
+import './assets/jquery.calendars.translations';
 
 @Directive({
-    selector: '[datepicker],[hijriPicker],[gregorianPicker]'
+    selector: '[datepicker]',
 })
 export class DatePickerDirective implements OnInit {
 
     private readonly supportedCalendars: string[] = ['gregorian', 'ummalqura', 'hijri'];
+    private defaultLang: string = "en";
 
-    @Input() lang: string = "ar";
-    @Input() calendarType: string;
+    @Input() lang: string;
+    @Input() calendar: string;
 
     @Input() defaultDate: string;
     @Input() minDate: string;
@@ -34,7 +36,7 @@ export class DatePickerDirective implements OnInit {
 
     private clickable: boolean = false;
 
-    constructor(private el: ElementRef, @Optional() private control: NgControl) {
+    constructor(private datepickerService: DatePickerService, private el: ElementRef, @Optional() private control: NgControl) {
         this.element = this.el.nativeElement;
     }
     
@@ -44,7 +46,7 @@ export class DatePickerDirective implements OnInit {
         let triggerer = $(`[datepicker-trigger=${elementName}]`);
         
         if (triggerer.length > 0) {
-            triggerer.on('click', () => { this.onClick(true); });
+            triggerer.on('click', () => { this.show(); });
         }
         
         if ($e.attr("readonly")) {
@@ -66,66 +68,65 @@ export class DatePickerDirective implements OnInit {
             }
         }
 
-        this.calendarType = this.calendarType ? this.calendarType : (datepickerAttr ? datepickerAttr : this.supportedCalendars[0]);
-        if (this.calendarType == 'hijri') {
-            this.calendarType = 'ummalqura';
+        this.calendar = this.calendar ? this.calendar : (datepickerAttr ? datepickerAttr : this.supportedCalendars[0]);
+        if (this.calendar == 'hijri') {
+            this.calendar = 'ummalqura';
         }
 
-        if (this.calendarType == 'ummalqura') {
+        if (this.calendar == 'ummalqura') {
             this.yearRange = '1276:1500';
         } else {
             this.yearRange = '1860:2077';
         }
     }
 
-    @HostListener('click') onClick(ignoreFlag?: boolean) {
-        if (this.clickable || ignoreFlag) {
-            //$(this._element).unbind().removeData();
-            let lang = this.lang;
+    show = () => {
+        let lang = this.lang || this.datepickerService.getLanguage() || this.defaultLang;
+        let options: any = {};
+        options.onSelect = (date: any) => this.setValue(date);
+        options.dateFormat = this.dateFormat;
+        options.yearRange = this.yearRange;
 
-            let options: any = {};
-            options.onSelect = (date: any) => this.setValue(date);
-            options.dateFormat = this.dateFormat;
-            options.yearRange = this.yearRange;
-
-            let instance;
-            if (lang == 'ar') {
-                instance = (<any>$).calendars.instance(this.calendarType, 'ar');
-                options.prevText = '&lt;السابق';
-                options.prevStatus = 'الشهر السابق';
-                options.prevJumpText = '&lt;&lt;';
-                options.prevJumpStatus = 'العام السابق';
-                options.nextText = 'التالي&gt;';
-                options.nextStatus = 'الشهر القادم';
-                options.nextJumpText = '&gt;&gt;';
-                options.nextJumpStatus = 'العام القادم';
-                options.currentText = 'الحالي';
-                options.currentStatus = 'الشهر الحالي';
-                options.todayText = 'اليوم';
-                options.todayStatus = 'اليوم الحالي / عرض الشهر';
-                options.clearText = 'مسح';
-                options.clearStatus = 'إعادة تعيين التواريخ';
-                options.closeText = 'إغلاق';
-                options.closeStatus = 'اختيار التاريخ غلق';
-                options.yearStatus = 'تغيير العام';
-                options.monthStatus = 'تغيير الشهر';
-                options.isRTL = true;
-            } else {
-                instance = (<any>$).calendars.instance(this.calendarType);
-            }
-            
-            options.minDate = this.getMinDate(instance);
-            options.maxDate = this.getMaxDate(instance);
-            
-            options.calendar = instance;
-
-            (<any>$(this.element)).calendarsPicker('destroy');
-            (<any>$(this.element)).calendarsPicker(options).calendarsPicker('show');
+        let instance;
+        if (lang == 'ar') {
+            instance = (<any>$).calendars.instance(this.calendar, 'ar');
+            options.prevText = '&lt;السابق';
+            options.prevStatus = 'الشهر السابق';
+            options.prevJumpText = '&lt;&lt;';
+            options.prevJumpStatus = 'العام السابق';
+            options.nextText = 'التالي&gt;';
+            options.nextStatus = 'الشهر القادم';
+            options.nextJumpText = '&gt;&gt;';
+            options.nextJumpStatus = 'العام القادم';
+            options.currentText = 'الحالي';
+            options.currentStatus = 'الشهر الحالي';
+            options.todayText = 'اليوم';
+            options.todayStatus = 'اليوم الحالي / عرض الشهر';
+            options.clearText = 'مسح';
+            options.clearStatus = 'إعادة تعيين التواريخ';
+            options.closeText = 'إغلاق';
+            options.closeStatus = 'اختيار التاريخ غلق';
+            options.yearStatus = 'تغيير العام';
+            options.monthStatus = 'تغيير الشهر';
+            options.isRTL = true;
+        } else {
+            instance = (<any>$).calendars.instance(this.calendar);
         }
+        
+        options.minDate = this.getMinDate(instance);
+        options.maxDate = this.getMaxDate(instance);
+        
+        options.calendar = instance;
+
+        (<any>$(this.element)).calendarsPicker('destroy');
+        (<any>$(this.element)).calendarsPicker(options).calendarsPicker('show');
+    }
+
+    @HostListener('click') onClick() {
+        if (this.clickable) this.show();
     }
 
     setValue(date: any) {
-        console.log(date);
         let formattedDate = date && date[0] ? date[0].formatDate(this.dateFormat) : '';
         if (this.control)
             this.control.control.setValue(formattedDate);
