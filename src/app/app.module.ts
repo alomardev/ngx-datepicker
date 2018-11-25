@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { DatePickerModule } from 'projects/elm/ngx-datepicker/src/public_api';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -11,6 +12,8 @@ import { DatePickerModule } from 'projects/elm/ngx-datepicker/src/public_api';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     DatePickerModule.forRoot(CustomDatePickerService),
   ],
   providers: [],

@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 
-import { DatePickerService, DatePickerConfigs } from '../../projects/elm/ngx-datepicker/src/lib/datepicker.service';
+import { DatePickerService, DatePicker } from '../../projects/elm/ngx-datepicker/src/lib/datepicker.service';
 
 @Injectable()
 export class CustomDatePickerService extends DatePickerService {
   constructor() {
     super({
-      button: DatePickerConfigs.Button.End
+      button: DatePicker.Button.End,
+      calendar: DatePicker.Calendar.Hijri,
+      dateFormat: {
+        [DatePicker.Calendar.Gregorian]: "yyyy__mm__dd"
+      }
     });
   }
 

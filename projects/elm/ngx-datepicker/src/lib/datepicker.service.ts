@@ -1,22 +1,34 @@
 import { Injectable } from '@angular/core';
 
-export namespace DatePickerConfigs {
+export namespace DatePicker {
     export enum Button {
         Start = 'start',
         End = 'end',
         None = 'none'
     }
+    export enum Calendar {
+        Hijri = 'hijri',
+        Gregorian = 'gregorian'
+    }
+    export type Format = string | {[key in Calendar]?: string};
 }
 
 export interface DatePickerConfigs {
-    button?: DatePickerConfigs.Button;
+    button?: DatePicker.Button;
+    dateFormat?: DatePicker.Format;
+    calendar?: DatePicker.Calendar;
 }
 
 @Injectable()
 export class DatePickerService {
 
     private readonly defaultConfigs: DatePickerConfigs = {
-        button: DatePickerConfigs.Button.End
+        button: DatePicker.Button.End,
+        dateFormat: {
+            [DatePicker.Calendar.Hijri]: "yyyy/mm/dd",
+            [DatePicker.Calendar.Gregorian]: "yyyy-mm-dd"
+        },
+        calendar: DatePicker.Calendar.Gregorian,
     };
 
     private __configs: DatePickerConfigs;
@@ -24,7 +36,12 @@ export class DatePickerService {
     get configs() { return this.__configs; }
 
     constructor(configs?: DatePickerConfigs) {
-        this.__configs = configs || this.defaultConfigs;
+        this.__configs = {...this.defaultConfigs};
+        if (configs) {
+            for (let key in configs) {
+                if (configs[key]) this.__configs[key] = configs[key];
+            }
+        }
     }
 
     getLanguage(): string { return null; }

@@ -1,4 +1,4 @@
-import { DatePickerService } from './datepicker.service';
+import { DatePickerService, DatePicker } from './datepicker.service';
 import { Directive, ElementRef, HostListener, Input, Output, EventEmitter, OnInit, Optional } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import $ from 'jquery';
@@ -14,21 +14,22 @@ import './assets/jquery.calendars.translations';
 })
 export class DatePickerDirective implements OnInit {
 
-    private readonly supportedCalendars: string[] = ['gregorian', 'ummalqura', 'hijri'];
-    private defaultLang: string = "en";
+    private readonly defaultLang = "en";
+    private readonly defaultFormat = "yyyy-mm-dd";
+    private readonly defaultCalendar = DatePicker.Calendar.Gregorian;
 
     @Input() lang: string;
     @Input() calendar: string;
 
-    @Input() defaultDate: string;
     @Input() minDate: string;
     @Input() maxDate: string;
-    @Input() dateFormat = 'yyyy/mm/dd';
+    @Input() dateFormat: DatePicker.Format;
 
     // Compatibility
     @Input() maxYesterday: boolean;
     @Input() minTomorrow: boolean;
 
+    @Input() disabled: boolean;
     @Output('changed') onDateChanged: EventEmitter<string> = new EventEmitter();
 
     private yearRange: string;
@@ -50,42 +51,52 @@ export class DatePickerDirective implements OnInit {
         }
         
         if ($e.attr("readonly")) {
+            // TODO: Pointer cursor in CSS
             this.clickable = true;
         }
 
         $e.attr("autocomplete", "off");
+
         
-        let datepickerAttr;
+        // Configurations
+        let { configs } = this.datepickerService;
 
-        for (let i = 0; i < this.element.attributes.length; i++) {
-            let attr = this.element.attributes.item(i);
-            if (attr.name.toLowerCase().indexOf('hijripicker') == 0) {
-                datepickerAttr = 'ummalqura';
-            } else if (attr.name.toLowerCase().indexOf('gregorianpicker') == 0) {
-                datepickerAttr = 'gregorian';
-            } else if (attr.name.toLowerCase().indexOf('datepicker') == 0 && attr.value != undefined && this.supportedCalendars.indexOf(attr.value) > -1) {
-                datepickerAttr = attr.value;
+        this.calendar = this.calendar || configs.calendar || this.defaultCalendar;
+        
+        if (!this.dateFormat && configs.dateFormat) {
+            switch (this.calendar) {
+                case DatePicker.Calendar.Gregorian:
+                    this.dateFormat = configs.dateFormat[DatePicker.Calendar.Gregorian] || this.defaultFormat;
+                    break;
+                case DatePicker.Calendar.Hijri:
+                    this.dateFormat = configs.dateFormat[DatePicker.Calendar.Hijri] || this.defaultFormat;
+                    break;
             }
+        } else {
+            this.dateFormat = this.dateFormat || this.defaultFormat;
         }
 
-        this.calendar = this.calendar ? this.calendar : (datepickerAttr ? datepickerAttr : this.supportedCalendars[0]);
-        if (this.calendar == 'hijri') {
-            this.calendar = 'ummalqura';
-        }
-
-        if (this.calendar == 'ummalqura') {
+        if (this.calendar == DatePicker.Calendar.Hijri) {
             this.yearRange = '1276:1500';
         } else {
             this.yearRange = '1860:2077';
         }
+
+        // Mapping hijri to ummalqura
+        if (this.calendar == DatePicker.Calendar.Hijri) {
+            this.calendar = 'ummalqura';
+        }
     }
 
     show = () => {
+        if (this.disabled) return;
+
         let lang = this.lang || this.datepickerService.getLanguage() || this.defaultLang;
         let options: any = {};
         options.onSelect = (date: any) => this.setValue(date);
         options.dateFormat = this.dateFormat;
         options.yearRange = this.yearRange;
+        options.showOnFocus = false;
 
         let instance;
         if (lang == 'ar') {
@@ -118,8 +129,9 @@ export class DatePickerDirective implements OnInit {
         
         options.calendar = instance;
 
-        (<any>$(this.element)).calendarsPicker('destroy');
-        (<any>$(this.element)).calendarsPicker(options).calendarsPicker('show');
+        (<any>$(this.element)).calendarsPicker('destroy')
+                              .calendarsPicker(options)
+                              .calendarsPicker('show');
     }
 
     @HostListener('click') onClick() {

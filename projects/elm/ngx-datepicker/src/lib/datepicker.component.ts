@@ -1,31 +1,29 @@
-import { DatePickerConfigs } from './../../../../../dist/elm/ngx-datepicker/lib/datepicker.service.d';
-import { DatePickerService } from './datepicker.service';
+import { DatePickerService, DatePickerConfigs } from './datepicker.service';
 import { DatePickerDirective } from './datepicker.directive';
 import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
-export const DATEPICKER_CONTROL_VALUE_ACCESSOR: any = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => DatePickerComponent),
-  multi: true
-};
-
 @Component({
   selector: 'datepicker',
   templateUrl: './datepicker.component.html',
-  styleUrls: ['./assets/jquery.calendars.picker.css'],
+  styleUrls: ['./assets/jquery.calendars.picker.css', './datepicker.component.css'],
   encapsulation: ViewEncapsulation.None,
-  providers: [DATEPICKER_CONTROL_VALUE_ACCESSOR],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => DatePickerComponent),
+    multi: true
+  }],
 })
 export class DatePickerComponent implements ControlValueAccessor {
-  
+
   @Input() calendar: string;
 
   @Input() lang: string;
   @Input() name: string;
   @Input() minDate: string;
   @Input() maxDate: string;
-  @Input() dateFormat = 'yyyy/mm/dd';
+  @Input() dateFormat: string;
+  @Input() disabled = false;
 
   @Output('blur') blurHandler: EventEmitter<any> = new EventEmitter();
   @Output('changed') changedHandler: EventEmitter<string> = new EventEmitter();
@@ -35,7 +33,7 @@ export class DatePickerComponent implements ControlValueAccessor {
   innerValue: string;
   configs: DatePickerConfigs;
 
-  onModelChanged = (v: any) => {};
+  onModelChanged = v => v;
   onModelTouched = () => {};
 
   constructor(private datepickerService: DatePickerService) {
@@ -51,17 +49,22 @@ export class DatePickerComponent implements ControlValueAccessor {
   registerOnChange(fn: any): void {
     this.onModelChanged = fn;
   }
+
   registerOnTouched(fn: any): void {
     this.onModelTouched = fn;
   }
 
+  setDisabledState(isDisabled: boolean) {
+    this.disabled = isDisabled;
+  }
+
   onChanged(newDate: string) {
-    this.onModelChanged(newDate);
-    this.onModelTouched(); // FIXME: better to trigger touched when closing the datepicker
+    // this.onModelChanged(newDate); // Not needed since a change in <input> cause NgModel to be changed
     this.changedHandler.emit(newDate);
   }
 
   onBlur(event) {
+    this.onModelTouched(); // FIXME: better to trigger touched when closing the datepicker
     this.blurHandler.emit(event);
   }
 

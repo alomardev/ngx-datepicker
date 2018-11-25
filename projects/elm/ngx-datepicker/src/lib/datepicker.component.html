@@ -9,6 +9,7 @@
   [minDate]='minDate'
   [dateFormat]='dateFormat'
   [calendar]='calendar'
+  [disabled]='disabled'
   (blur)='onBlur($event)'
   (changed)='onChanged($event)'>
   <span *ngIf="configs.button == 'end'" (click)="show()" class="input-group-btn input-group-append"><button class="btn btn-outline-secondary" type="button"><i class="fa fa-calendar"></i></button></span>
