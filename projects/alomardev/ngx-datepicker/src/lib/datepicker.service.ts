@@ -1,14 +1,12 @@
-import { Injectable } from '@angular/core';
-
 export namespace DatePicker {
     export enum Button {
-        Start = 'start',
-        End = 'end',
-        None = 'none'
+        Start = <any>'start',
+        End = <any>'end',
+        None = <any>'none'
     }
     export enum Calendar {
-        Hijri = 'hijri',
-        Gregorian = 'gregorian'
+        Hijri = <any>'hijri',
+        Gregorian = <any>'gregorian'
     }
     export type Format = string | {[key in Calendar]?: string};
 }
@@ -19,7 +17,6 @@ export interface DatePickerConfigs {
     calendar?: DatePicker.Calendar;
 }
 
-@Injectable()
 export class DatePickerService {
 
     private readonly defaultConfigs: DatePickerConfigs = {

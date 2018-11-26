@@ -1,6 +1,6 @@
 {
   "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../dist/elm/ngx-datepicker",
+  "dest": "../../../dist/alomardev/ngx-datepicker",
   "lib": {
     "entryFile": "src/public_api.ts"
   }

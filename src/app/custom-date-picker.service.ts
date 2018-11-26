@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { DatePickerService, DatePicker } from '../../projects/elm/ngx-datepicker/src/lib/datepicker.service';
+import { DatePickerService, DatePicker } from '@alomardev/ngx-datepicker';
 
 @Injectable()
 export class CustomDatePickerService extends DatePickerService {

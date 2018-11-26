@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { DatePickerModule } from 'projects/elm/ngx-datepicker/src/public_api';
+import { DatePickerModule } from '@alomardev/ngx-datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({

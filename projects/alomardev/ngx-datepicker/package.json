@@ -1,0 +1,9 @@
+{
+  "name": "@alomardev/ngx-datepicker",
+  "version": "0.0.2",
+  "peerDependencies": {
+    "@angular/common": ">=4.0.0 <=^6.0.0",
+    "@angular/core": ">=4.0.0 <=^6.0.0",
+    "jquery": ">=2.1.0 <4.0.0"
+  }
+}

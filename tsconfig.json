@@ -18,11 +18,11 @@
       "dom"
     ],
     "paths": {
-      "@elm/ngx-datepicker": [
-        "dist/elm/ngx-datepicker"
+      "@alomardev/ngx-datepicker": [
+        "dist/alomardev/ngx-datepicker"
       ],
-      "@elm/ngx-datepicker/*": [
-        "dist/elm/ngx-datepicker/*"
+      "@alomardev/ngx-datepicker/*": [
+        "dist/alomardev/ngx-datepicker/*"
       ]
     }
   }
